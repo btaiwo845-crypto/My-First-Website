@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlMustapha Academy | Enterprise Academic & Student Management System</title>
+  <meta name="description" content="AlMustapha Academy official portal featuring student directory, QR Digital ID cards, PDF report cards, Dar Al-Hikmah learning sanctuary, AI study assistant, library management, and multi-role security.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+  <!-- ====================================================================
+       1. SECURITY GATEWAY / AUTHENTICATION OVERLAY
+       ==================================================================== -->
+  <div id="security-gateway" class="security-gateway">
+    <div class="gateway-box">
+      <div class="gateway-header">
+        <div class="gateway-crest">🏛️</div>
+        <h2>ALMUSTAPHA ACADEMY</h2>
+        <p>Enterprise Academic Gateway &amp; Identity Access</p>
+      </div>
+
+      <div class="gateway-body">
+        <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; text-align:center;">
+          Select Portal Role
+        </div>
+
+        <div class="role-pill-selector">
+          <div class="role-pill active" data-role="admin">Admin</div>
+          <div class="role-pill" data-role="teacher">Teacher</div>
+          <div class="role-pill" data-role="student">Student</div>
+          <div class="role-pill" data-role="parent">Parent</div>
+        </div>
+
+        <form id="gateway-login-form">
+          <div style="margin-bottom:12px;">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">
+              Academic Email or Identifier
+            </label>
+            <input type="text" id="gateway-identifier-input" class="form-input" style="width:100%; padding:10px;" value="admin@almustapha.edu" required>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label style="font-size:12px; font-weight:600; color:var(--text-muted);">
+                Password / Master PIN
+              </label>
+              <a href="#" style="font-size:11px; color:var(--primary); text-decoration:none; font-weight:600;" onclick="window.smsApp.openForgotPasswordModal()">Forgot Password?</a>
+            </div>
+            <div style="position:relative;">
+              <input type="password" id="gateway-password-input" class="form-input" style="width:100%; padding:10px 38px 10px 10px;" value="Admin@2026!" required>
+              <button type="button" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted);" onclick="const el=document.getElementById('gateway-password-input'); el.type = el.type==='password'?'text':'password';">👁️</button>
+            </div>
+          </div>
+
+          <div class="quick-pin-presets" style="margin-bottom:14px;">
+            <span style="font-size:11px; color:#64748b; align-self:center;">Quick Auth Demo:</span>
+            <button type="button" class="quick-pin-btn" onclick="document.getElementById('gateway-identifier-input').value='admin@almustapha.edu'; document.getElementById('gateway-password-input').value='Admin@2026!'; document.getElementById('gateway-login-form').requestSubmit();">Admin (Full Access)</button>
+            <button type="button" class="quick-pin-btn" onclick="document.getElementById('gateway-identifier-input').value='student@almustapha.edu'; document.getElementById('gateway-password-input').value='Student@2026!'; document.getElementById('gateway-login-form').requestSubmit();">Student Demo</button>
+            <button type="button" class="quick-pin-btn" onclick="document.getElementById('gateway-identifier-input').value='2026'; document.getElementById('gateway-password-input').value='2026'; document.getElementById('gateway-login-form').requestSubmit();">PIN 2026</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; font-weight:700;">
+            🔐 Authenticate &amp; Enter Portal
+          </button>
+        </form>
+
+        <div style="margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; font-size:11px; color:#64748b;">
+          <span>🛡️ TLS 1.3 / HTTPS Enforced</span>
+          <span>🔒 SQLi &amp; XSS Shield Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       2. APPLICATION SIDEBAR
+       ==================================================================== -->
+  <aside class="app-sidebar">
+    <div class="brand-section">
+      <div class="brand-crest">🏛️</div>
+      <div class="brand-title">
+        <h1>AlMustapha Academy</h1>
+        <span>Excellence &amp; Faith</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li class="nav-section-label">Institutional Core</li>
+      <li>
+        <a class="nav-link active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard Overview</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="students">
+          <span class="nav-icon">👥</span>
+          <span>Students Directory</span>
+          <span class="nav-badge-pill" id="nav-student-count-badge">6</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="classes">
+          <span class="nav-icon">🏫</span>
+          <span>Classes &amp; Subjects</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="teachers">
+          <span class="nav-icon">👨‍🏫</span>
+          <span>Faculty &amp; Teachers</span>
+        </a>
+      </li>
+
+      <li class="nav-section-label">Academics &amp; Assessment</li>
+      <li>
+        <a class="nav-link" data-view="grades">
+          <span class="nav-icon">📈</span>
+          <span>Results &amp; CGPA Engine</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="assignments">
+          <span class="nav-icon">📑</span>
+          <span>Online Assignments</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="attendance">
+          <span class="nav-icon">📅</span>
+          <span>Attendance Register</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="exams">
+          <span class="nav-icon">⏱️</span>
+          <span>Examinations Schedule</span>
+        </a>
+      </li>
+
+      <li class="nav-section-label">Student Sanctuary &amp; Family</li>
+      <li>
+        <a class="nav-link" data-view="dar-al-hikmah">
+          <span class="nav-icon">✨</span>
+          <span>Dar Al-Hikmah (Learning Hub)</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="parent-portal">
+          <span class="nav-icon">👨‍👩‍👧</span>
+          <span>Parent Portal</span>
+        </a>
+      </li>
+
+      <li class="nav-section-label">Operations &amp; Intelligence</li>
+      <li>
+        <a class="nav-link" data-view="library">
+          <span class="nav-icon">📚</span>
+          <span>Library Management</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="ai-assistant">
+          <span class="nav-icon">🤖</span>
+          <span>AI Academic Suite</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="audit-logs">
+          <span class="nav-icon">🛡️</span>
+          <span>Security Audit Logs</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" data-view="backup">
+          <span class="nav-icon">💾</span>
+          <span>Backup &amp; Data Export</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-session-card">
+        <div class="user-session-info">
+          <span>👤</span>
+          <div>
+            <div style="font-weight:700; color:#fff;" id="session-user-name">Active Session</div>
+            <span class="user-role-badge" id="session-role-badge">ADMIN</span>
+          </div>
+        </div>
+        <button class="icon-btn danger" title="Sign Out" onclick="window.smsApp.handleLogout()">🚪</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====================================================================
+       3. APP MAIN SECTION & TOP HEADER
+       ==================================================================== -->
+  <main class="app-main">
+    <header class="app-header">
+      <div class="header-search">
+        <span class="search-icon-inside">🔍</span>
+        <input type="text" id="header-search-input" placeholder="Search student name, ID, class, or roll...">
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Mode Switcher -->
+        <div class="theme-selector">
+          <button class="theme-btn" data-theme-val="light" title="Light Theme">☀️ Light</button>
+          <button class="theme-btn" data-theme-val="dark" title="Dark Theme">🌙 Dark</button>
+          <button class="theme-btn active" data-theme-val="system" title="Follow System Scheme">💻 Auto</button>
+        </div>
+
+        <!-- Quick Email Broadcast Trigger -->
+        <button class="btn btn-secondary btn-sm" onclick="window.smsApp.openEmailModal()">
+          ✉️ Broadcast
+        </button>
+
+        <button class="btn btn-primary btn-sm" onclick="window.smsApp.openAddModal()">
+          + Enrol Student
+        </button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+
+      <!-- ================================================================
+           VIEW 1: MASTER DASHBOARD
+           ================================================================ -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>AlMustapha Academy Executive Dashboard</h2>
+            <p>Comprehensive academic, financial, attendance, and institutional metrics.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary btn-sm" onclick="window.smsApp.exportCSV()">Export Directory CSV</button>
+            <button class="btn btn-gold btn-sm" onclick="window.smsApp.switchView('dar-al-hikmah')">✨ Dar Al-Hikmah Hub</button>
+          </div>
+        </div>
+
+        <!-- 8 Master KPI Metrics Grid -->
+        <div class="kpi-grid-master">
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-blue">👥</div>
+            <div>
+              <div class="kpi-label">Total Students</div>
+              <div class="kpi-num" id="stat-total-students">6</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-teal">📖</div>
+            <div>
+              <div class="kpi-label">Subjects Offered</div>
+              <div class="kpi-num" id="stat-total-subjects">7</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-purple">🏫</div>
+            <div>
+              <div class="kpi-label">Active Classes</div>
+              <div class="kpi-num" id="stat-total-classes">5</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-gold">👨‍🏫</div>
+            <div>
+              <div class="kpi-label">Faculty Staff</div>
+              <div class="kpi-num" id="stat-total-teachers">7</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-green">📅</div>
+            <div>
+              <div class="kpi-label">Attendance Rate</div>
+              <div class="kpi-num" id="stat-attendance-rate">94%</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-rose">💳</div>
+            <div>
+              <div class="kpi-label">Total Fees Collected</div>
+              <div class="kpi-num" style="font-size:18px;" id="stat-fees-collected">$22,600 / $27,300</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-blue">⭐</div>
+            <div>
+              <div class="kpi-label">Campus Avg GPA</div>
+              <div class="kpi-num" id="stat-avg-gpa">3.32</div>
+            </div>
+          </div>
+          <div class="kpi-card-v2">
+            <div class="kpi-icon-v2 kpi-gold">🏆</div>
+            <div>
+              <div class="kpi-label">Honor Roll (3.5+)</div>
+              <div class="kpi-num" id="stat-honor-roll">4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Column Feeds: Notifications, Exams, Birthdays -->
+        <div class="dashboard-tri-grid">
+          <!-- Column 1: Notifications -->
+          <div class="feed-card">
+            <div class="feed-header">
+              <h3>📢 Recent Notifications</h3>
+              <span style="font-size:11px; color:var(--text-muted);">Real-time</span>
+            </div>
+            <div class="feed-list" id="dashboard-notifications-list">
+              <!-- Dynamically injected -->
+            </div>
+          </div>
+
+          <!-- Column 2: Upcoming Examinations -->
+          <div class="feed-card">
+            <div class="feed-header">
+              <h3>⏱️ Upcoming Examinations</h3>
+              <span style="font-size:11px; color:var(--text-muted);">Term 2 Finals</span>
+            </div>
+            <div class="feed-list" id="dashboard-exams-list">
+              <!-- Dynamically injected -->
+            </div>
+          </div>
+
+          <!-- Column 3: Student Birthdays Spotlight -->
+          <div class="feed-card">
+            <div class="feed-header">
+              <h3>🎂 Birthday Spotlight</h3>
+              <span style="font-size:11px; color:#d97706; font-weight:700;">October Celebrants</span>
+            </div>
+            <div class="feed-list" id="dashboard-birthdays-list">
+              <!-- Dynamically injected -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Academic Performers Table -->
+        <div class="content-card">
+          <div class="card-toolbar">
+            <h3 style="font-size:15px; font-weight:700;">🏆 Honor Roll &amp; Academic Ranking Leaderboard</h3>
+            <button class="btn btn-secondary btn-sm" onclick="window.smsApp.switchView('students')">View All Directory →</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Profile</th>
+                  <th>Class Level</th>
+                  <th>Cumulative GPA (4.0)</th>
+                  <th>Attendance %</th>
+                  <th>Academic Standing</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-students-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 2: STUDENTS DIRECTORY
+           ================================================================ -->
+      <section id="view-students" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Students Directory &amp; Records</h2>
+            <p>Access digital passes, transcripts, financial status, and academic dossiers.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary btn-sm" onclick="window.smsApp.exportCSV()">Export CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="window.smsApp.openAddModal()">+ Register Student</button>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-toolbar">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span id="students-total-count" style="font-size:13px; font-weight:700; color:var(--text-muted);">6 Registered Students</span>
+              <select id="filter-class" class="form-select">
+                <option value="">All Classes</option>
+                <option value="Grade 10 - Alpha (Science)">Grade 10 - Alpha (Science)</option>
+                <option value="Grade 10 - Beta (Arts & Humanities)">Grade 10 - Beta (Arts & Humanities)</option>
+                <option value="Grade 11 - Emerald (STEM)">Grade 11 - Emerald (STEM)</option>
+                <option value="Grade 11 - Sapphire (Business)">Grade 11 - Sapphire (Business)</option>
+                <option value="Grade 12 - Honors Academy">Grade 12 - Honors Academy</option>
+              </select>
+              <select id="filter-status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Roll ID</th>
+                  <th>Class Level</th>
+                  <th>GPA</th>
+                  <th>Attendance</th>
+                  <th>Tuition Fees</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body">
+                <!-- Injected via UI.renderStudentsTable -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 3: CLASSES & SUBJECTS
+           ================================================================ -->
+      <section id="view-classes" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Academic Classes &amp; Subjects Curriculum</h2>
+            <p>Course structures, credit weighting, classroom allocations, and homeroom teachers.</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <!-- Classes List -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:14px;">🏫 Registered Classes</h3>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div class="feed-item priority-info">
+                <strong>Grade 10 - Alpha (Science)</strong>
+                <div style="font-size:12px; color:var(--text-muted);">Hall A-1 • Capacity: 35 • Class Teacher: Dr. Fatima Al-Mansoor</div>
+              </div>
+              <div class="feed-item priority-info">
+                <strong>Grade 10 - Beta (Arts &amp; Humanities)</strong>
+                <div style="font-size:12px; color:var(--text-muted);">Hall A-2 • Capacity: 30 • Class Teacher: Prof. Tariq Hashim</div>
+              </div>
+              <div class="feed-item priority-info">
+                <strong>Grade 11 - Emerald (STEM)</strong>
+                <div style="font-size:12px; color:var(--text-muted);">Lab Block B-1 • Capacity: 32 • Class Teacher: Dr. Alan Vance</div>
+              </div>
+              <div class="feed-item priority-info">
+                <strong>Grade 11 - Sapphire (Business)</strong>
+                <div style="font-size:12px; color:var(--text-muted);">Commerce Hall • Capacity: 30 • Class Teacher: Mrs. Zainab Olatunji</div>
+              </div>
+              <div class="feed-item priority-info">
+                <strong>Grade 12 - Honors Academy</strong>
+                <div style="font-size:12px; color:var(--text-muted);">Deanery Wing • Capacity: 25 • Class Teacher: Dr. Richard Thorne</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subjects List -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:14px;">📖 Curriculum Subjects</h3>
+            <table class="data-table" style="font-size:12.5px;">
+              <thead><tr><th>Code</th><th>Subject Title</th><th>Credits</th><th>Dept</th></tr></thead>
+              <tbody>
+                <tr><td><code>PHY-301</code></td><td>Advanced Physics</td><td>4 cr</td><td>Natural Sciences</td></tr>
+                <tr><td><code>MAT-201</code></td><td>Pure Mathematics &amp; Calculus</td><td>4 cr</td><td>Mathematics</td></tr>
+                <tr><td><code>CS-101</code></td><td>Computer Science &amp; Software</td><td>4 cr</td><td>IT</td></tr>
+                <tr><td><code>CHM-202</code></td><td>Chemistry &amp; Laboratory</td><td>3 cr</td><td>Natural Sciences</td></tr>
+                <tr><td><code>ENG-105</code></td><td>Literature &amp; Academic Writing</td><td>3 cr</td><td>Humanities</td></tr>
+                <tr><td><code>ETH-100</code></td><td>Ethics &amp; Philosophy</td><td>2 cr</td><td>Moral Studies</td></tr>
+                <tr><td><code>ECN-201</code></td><td>Economics &amp; Global Finance</td><td>3 cr</td><td>Social Sciences</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 4: FACULTY & TEACHERS
+           ================================================================ -->
+      <section id="view-teachers" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Faculty &amp; Instructional Staff</h2>
+            <p>Distinguished scholars and educators of AlMustapha Academy.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <table class="data-table">
+            <thead>
+              <tr><th>Staff ID</th><th>Teacher Name</th><th>Primary Subject</th><th>Academic Email</th><th>Phone Contact</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>TCH-001</code></td><td><strong>Dr. Fatima Al-Mansoor</strong></td><td>Advanced Physics</td><td>f.almansoor@almustapha.edu</td><td>+1 555-2011</td><td><span class="badge badge-active">Active</span></td></tr>
+              <tr><td><code>TCH-002</code></td><td><strong>Prof. Tariq Hashim</strong></td><td>Literature &amp; Rhetoric</td><td>t.hashim@almustapha.edu</td><td>+1 555-2012</td><td><span class="badge badge-active">Active</span></td></tr>
+              <tr><td><code>TCH-003</code></td><td><strong>Dr. Alan Vance</strong></td><td>Computer Science &amp; AI</td><td>a.vance@almustapha.edu</td><td>+1 555-2013</td><td><span class="badge badge-active">Active</span></td></tr>
+              <tr><td><code>TCH-004</code></td><td><strong>Mrs. Zainab Olatunji</strong></td><td>Pure Mathematics</td><td>z.olatunji@almustapha.edu</td><td>+1 555-2014</td><td><span class="badge badge-active">Active</span></td></tr>
+              <tr><td><code>TCH-005</code></td><td><strong>Dr. Richard Thorne</strong></td><td>Chemistry &amp; Biochemistry</td><td>r.thorne@almustapha.edu</td><td>+1 555-2015</td><td><span class="badge badge-active">Active</span></td></tr>
+              <tr><td><code>TCH-006</code></td><td><strong>Ustadh Bilal Idris</strong></td><td>Islamic Studies &amp; Ethics</td><td>b.idris@almustapha.edu</td><td>+1 555-2016</td><td><span class="badge badge-active">Active</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 5: RESULTS & CGPA ENGINE
+           ================================================================ -->
+      <section id="view-grades" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Automatic Result Calculation &amp; GPA Engine</h2>
+            <p>Automated weighting: Midterm (30%) + CA Assignments (20%) + Final Examination (50%).</p>
+          </div>
+        </div>
+
+        <div class="content-card" style="padding:20px;">
+          <h4 style="margin-bottom:12px;">Grade Calculation Rubric (4.0 Standard Scale)</h4>
+          <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; font-size:12px; text-align:center;">
+            <div style="background:var(--bg-main); padding:8px; border-radius:6px;"><strong>A (93-100)</strong><br>4.0 GP</div>
+            <div style="background:var(--bg-main); padding:8px; border-radius:6px;"><strong>A- (90-92)</strong><br>3.7 GP</div>
+            <div style="background:var(--bg-main); padding:8px; border-radius:6px;"><strong>B+ (87-89)</strong><br>3.3 GP</div>
+            <div style="background:var(--bg-main); padding:8px; border-radius:6px;"><strong>B (83-86)</strong><br>3.0 GP</div>
+            <div style="background:var(--bg-main); padding:8px; border-radius:6px;"><strong>Fail (&lt;60)</strong><br>0.0 GP</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 6: ONLINE ASSIGNMENTS
+           ================================================================ -->
+      <section id="view-assignments" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Online Assignments Portal</h2>
+            <p>Coursework deliverables, laboratory reports, and digital submission portals.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <table class="data-table">
+            <thead>
+              <tr><th>Assignment Title</th><th>Course</th><th>Instructor</th><th>Due Date</th><th>Max Score</th><th>Submissions</th><th>Action</th></tr>
+            </thead>
+            <tbody id="assignments-table-body">
+              <!-- Injected by UI.renderAssignments -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 7: ATTENDANCE REGISTER
+           ================================================================ -->
+      <section id="view-attendance" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Institutional Attendance Register</h2>
+            <p>Daily session presence logging with automated percentage tracking.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-toolbar">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <label style="font-size:12px; font-weight:700;">Date:</label>
+              <input type="date" id="attendance-session-date" class="form-input" value="2026-10-27">
+              <span class="badge badge-active">Session Open</span>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Student</th><th>Class</th><th>Overall Rate</th><th>Mark Today's Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Ziyad Al-Mustapha</strong></td><td>Grade 11 - Emerald</td><td>100%</td><td><button class="btn btn-sm btn-primary">✓ Present</button></td></tr>
+              <tr><td><strong>Amina Kareem</strong></td><td>Grade 10 - Alpha</td><td>90%</td><td><button class="btn btn-sm btn-primary">✓ Present</button></td></tr>
+              <tr><td><strong>Farouk Sulaiman</strong></td><td>Grade 10 - Alpha</td><td>60%</td><td><button class="btn btn-sm btn-danger">✕ Absent</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 8: EXAMS & TIMETABLE
+           ================================================================ -->
+      <section id="view-exams" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Upcoming Examinations Schedule</h2>
+            <p>Officially vetted halls, dates, and chief invigilators.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <table class="data-table">
+            <thead><tr><th>Course</th><th>Examination Title</th><th>Date</th><th>Session Time</th><th>Hall Location</th><th>Chief Invigilator</th></tr></thead>
+            <tbody>
+              <tr><td><code>PHY-301</code></td><td><strong>Mid-Term Physics Olympiad &amp; Theory</strong></td><td>2026-11-05</td><td>09:00 AM - 12:00 PM</td><td>Grand Examination Hall A</td><td>Dr. Fatima Al-Mansoor</td></tr>
+              <tr><td><code>MAT-201</code></td><td><strong>Calculus &amp; Linear Algebra Finals</strong></td><td>2026-11-08</td><td>09:30 AM - 12:30 PM</td><td>Auditorium Wing B</td><td>Mrs. Zainab Olatunji</td></tr>
+              <tr><td><code>CS-101</code></td><td><strong>Software Engineering Practical</strong></td><td>2026-11-12</td><td>01:00 PM - 04:00 PM</td><td>Turing Computing Complex</td><td>Dr. Alan Vance</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 9: DAR AL-HIKMAH (HOUSE OF WISDOM & LEARNING SANCTUARY)
+           ================================================================ -->
+      <section id="view-dar-al-hikmah" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>✨ AlMustapha Dar Al-Hikmah | The Knowledge Sanctuary</h2>
+            <p>Where students learn, understand, reflect, and master core concepts through wisdom and active recall.</p>
+          </div>
+        </div>
+
+        <!-- Wisdom of the Day Banner -->
+        <div class="dar-wisdom-banner">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#fef08a; font-weight:700; margin-bottom:4px;">
+            🌙 Daily Intellectual Reflection
+          </div>
+          <div class="dar-wisdom-quote" id="dar-quote-text">
+            "Seek knowledge from the cradle to the grave; for intellect illuminated by integrity is the highest virtue of human character."
+          </div>
+          <div class="dar-wisdom-scholar" id="dar-quote-scholar">
+            — Al-Kindi (Father of Philosophy &amp; Cryptanalysis)
+          </div>
+        </div>
+
+        <!-- Subject Concept Modules Grid -->
+        <div class="dar-modules-grid" id="dar-modules-container">
+          <!-- Injected via UI.renderDarAlHikmah -->
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 10: PARENT PORTAL
+           ================================================================ -->
+      <section id="view-parent-portal" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Parent &amp; Guardian Academic Portal</h2>
+            <p>Live progress tracking, attendance logs, tuition invoices, and teacher evaluations.</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <label style="font-size:12.5px; font-weight:700; display:block; margin-bottom:6px;">Select Student Ward:</label>
+          <select id="parent-student-select" class="form-select" style="max-width:400px;">
+            <!-- Injected dynamically -->
+          </select>
+        </div>
+
+        <div id="parent-portal-content">
+          <!-- Injected by UI.renderParentPortal -->
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 11: LIBRARY MANAGEMENT
+           ================================================================ -->
+      <section id="view-library" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Library &amp; Knowledge Repository</h2>
+            <p>Catalogued volumes, ISBN indexing, borrowing logs, and book check-in/out.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-toolbar">
+            <h3 style="font-size:15px; font-weight:700;">📖 Available Volumes</h3>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>ISBN</th><th>Title</th><th>Author</th><th>Category</th><th>Copies</th><th>Shelf Rack</th><th>Action</th></tr></thead>
+            <tbody id="library-books-body">
+              <!-- Injected by UI.renderLibrary -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-card">
+          <div class="card-toolbar">
+            <h3 style="font-size:15px; font-weight:700;">📋 Current Borrowing &amp; Due Logs</h3>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Borrower Student</th><th>Book Volume</th><th>Issue Date</th><th>Return Due Date</th><th>Status</th><th>Reconcile</th></tr></thead>
+            <tbody id="library-logs-body">
+              <!-- Injected by UI.renderLibrary -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 12: AI ACADEMIC SUITE
+           ================================================================ -->
+      <section id="view-ai-assistant" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>🤖 AlMustapha AI Academic Intelligence Suite</h2>
+            <p>Four specialized AI engines for study tutoring, performance analysis, timetables, and official announcements.</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <!-- 1. AI Study Tutor -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">🧠 Mode 1: AI Study Tutor</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">Ask any academic question across Math, Physics, Computer Science, and Humanities.</p>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <input type="text" id="ai-tutor-input" class="form-input" style="flex-grow:1;" placeholder="e.g. Explain calculus chain rule or Newton's laws...">
+              <button class="btn btn-primary btn-sm" id="ai-tutor-ask-btn">Ask AI</button>
+            </div>
+            <div id="ai-tutor-response-box" style="background:var(--bg-main); padding:14px; border-radius:6px; font-size:13px; min-height:80px;">
+              <em>AI response will appear here. Ask about mathematics, physics, algorithms, or essay structure.</em>
+            </div>
+          </div>
+
+          <!-- 2. AI Performance Diagnostician -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">📊 Mode 2: Student Performance Analyst</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">Generates deep academic diagnosis, weak course indicators, and tailored study schedules.</p>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <select id="ai-perf-student-select" class="form-select" style="flex-grow:1;">
+                <option value="stu_1">Ziyad Al-Mustapha (STEM)</option>
+                <option value="stu_2">Amina Kareem (Science)</option>
+                <option value="stu_3">Tariq Mansoor (Business)</option>
+                <option value="stu_5">Farouk Sulaiman (Probation Alert)</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="ai-perf-analyze-btn">Analyze</button>
+            </div>
+            <div id="ai-perf-response-box" style="background:var(--bg-main); padding:14px; border-radius:6px; font-size:13px; min-height:80px;">
+              <em>Click "Analyze" to run AI diagnostic performance report for the selected student.</em>
+            </div>
+          </div>
+
+          <!-- 3. AI Timetable Scheduler -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">📅 Mode 3: Conflict-Free Timetable Assistant</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">Computes balanced weekly schedules without room or faculty clashes.</p>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <select id="ai-timetable-class-select" class="form-select" style="flex-grow:1;">
+                <option value="Grade 11 - Emerald (STEM)">Grade 11 - Emerald (STEM)</option>
+                <option value="Grade 10 - Alpha (Science)">Grade 10 - Alpha (Science)</option>
+                <option value="Grade 12 - Honors Academy">Grade 12 - Honors Academy</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="ai-timetable-generate-btn">Generate</button>
+            </div>
+            <div id="ai-timetable-response-box" style="min-height:80px;">
+              <div style="background:var(--bg-main); padding:14px; border-radius:6px; font-size:13px;">Click "Generate" to build timetable.</div>
+            </div>
+          </div>
+
+          <!-- 4. AI Official Circular & Announcement Generator -->
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">📜 Mode 4: School Circular &amp; Announcement Generator</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">Drafts executive administrative notices ready for dispatch and print.</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+              <select id="ai-announcement-type" class="form-select">
+                <option value="exam">Upcoming Terminal Exams</option>
+                <option value="fee">Tuition &amp; Fee Deadline</option>
+                <option value="holiday">Mid-Term Institutional Recess</option>
+                <option value="general">Academic Excellence Showcase</option>
+              </select>
+              <input type="text" id="ai-announcement-title" class="form-input" placeholder="Title / Event">
+            </div>
+            <input type="text" id="ai-announcement-audience" class="form-input" value="All Parents, Guardians &amp; Faculty" style="margin-bottom:8px;">
+            <button class="btn btn-primary btn-sm" id="ai-announcement-generate-btn" style="margin-bottom:12px;">Generate Formal Circular</button>
+            <div id="ai-announcement-response-box" style="min-height:80px;">
+              <div style="background:var(--bg-main); padding:14px; border-radius:6px; font-size:13px;">Generated formal circular memorandum will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 13: SECURITY AUDIT LOGS
+           ================================================================ -->
+      <section id="view-audit-logs" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>System Security &amp; Audit Logs</h2>
+            <p>Chronological record of gateway entries, grade modifications, and system operations.</p>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <table class="data-table">
+            <thead><tr><th>Timestamp</th><th>User &amp; Role</th><th>Action</th><th>Operational Details</th></tr></thead>
+            <tbody id="audit-logs-table-body">
+              <!-- Injected by UI.renderAuditLogs -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW 14: SYSTEM BACKUP & DATA
+           ================================================================ -->
+      <section id="view-backup" class="view-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Data Export &amp; Disaster Recovery</h2>
+            <p>Export full snapshots, CSV directories, and reset master seed records.</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">Download Complete JSON Backup</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Full institutional archive of all students, grades, fees, library logs, and audit trails.</p>
+            <button class="btn btn-primary btn-sm" onclick="window.smsApp.exportBackupJSON()">Download Snapshot JSON</button>
+          </div>
+
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px;">Export Student Directory (CSV)</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Excel / Google Sheets compatible spreadsheet containing all active student metrics.</p>
+            <button class="btn btn-secondary btn-sm" onclick="window.smsApp.exportCSV()">Download CSV</button>
+          </div>
+
+          <div class="content-card" style="padding:20px;">
+            <h3 style="font-size:16px; margin-bottom:6px; color:var(--danger);">Reset to Master Demo Seed</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">Revert all changes and restore verified master AlMustapha Academy records.</p>
+            <button class="btn btn-danger btn-sm" onclick="window.smsApp.resetData()">Revert Database</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ====================================================================
+       MODALS
+       ==================================================================== -->
+
+  <!-- Modal 1: Digital Student ID Pass -->
+  <div id="modal-digital-id" class="modal-backdrop">
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header">
+        <h3>🪪 Official AlMustapha Student Identity Pass</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-digital-id')">✕</button>
+      </div>
+      <div class="modal-body" id="digital-id-modal-container">
+        <!-- Injected via UI.renderDigitalIDCard -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-digital-id')">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.smsApp.printCurrent()">🖨️ Print ID Badge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Official Terminal Examination Report Card -->
+  <div id="modal-report-card" class="modal-backdrop">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3>📜 Terminal Examination Transcript &amp; Report Card</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-report-card')">✕</button>
+      </div>
+      <div class="modal-body" id="report-card-modal-container">
+        <!-- Injected via UI.renderReportCard -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-report-card')">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.smsApp.printCurrent()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Enrol / Edit Student -->
+  <div id="modal-student-form" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="student-modal-title">Register New Student</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-student-form')">✕</button>
+      </div>
+      <form id="student-form">
+        <input type="hidden" id="student-form-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="form-student-id">Student ID / Roll No *</label>
+              <input type="text" id="form-student-id" class="form-input" required placeholder="AMA-2026-007">
+            </div>
+            <div class="form-group">
+              <label for="form-class">Assigned Class *</label>
+              <select id="form-class" class="form-select" required>
+                <option value="Grade 10 - Alpha (Science)">Grade 10 - Alpha (Science)</option>
+                <option value="Grade 10 - Beta (Arts & Humanities)">Grade 10 - Beta (Arts & Humanities)</option>
+                <option value="Grade 11 - Emerald (STEM)">Grade 11 - Emerald (STEM)</option>
+                <option value="Grade 11 - Sapphire (Business)">Grade 11 - Sapphire (Business)</option>
+                <option value="Grade 12 - Honors Academy">Grade 12 - Honors Academy</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-first-name">First Name *</label>
+              <input type="text" id="form-first-name" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="form-last-name">Last Name *</label>
+              <input type="text" id="form-last-name" class="form-input" required>
+            </div>
+            <div class="form-group full-width">
+              <label for="form-email">Academic Email *</label>
+              <input type="email" id="form-email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="form-dob">Date of Birth</label>
+              <input type="date" id="form-dob" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="form-blood">Blood Group</label>
+              <select id="form-blood" class="form-select">
+                <option value="O+">O+</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="AB+">AB+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-guardian">Guardian Name</label>
+              <input type="text" id="form-guardian" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="form-guardian-phone">Guardian Phone</label>
+              <input type="tel" id="form-guardian-phone" class="form-input">
+            </div>
+            <div class="form-group full-width">
+              <label for="form-status">Status</label>
+              <select id="form-status" class="form-select">
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-student-form')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Library Issue Book -->
+  <div id="modal-issue-book" class="modal-backdrop">
+    <div class="modal-box" style="max-width:460px;">
+      <div class="modal-header">
+        <h3 id="modal-issue-book-title">Issue Library Book</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-issue-book')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="issue-book-id">
+        <div class="form-group" style="margin-bottom:14px;">
+          <label>Assign to Enrolled Student:</label>
+          <select id="issue-student-select" class="form-select"></select>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted);">
+          Standard lending duration: 14 Days with automated renewal eligibility.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-issue-book')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="window.smsApp.handleIssueBookSubmit()">Confirm Issue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Dar Al-Hikmah Interactive Quiz -->
+  <div id="modal-dar-quiz" class="modal-backdrop">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 id="dar-quiz-modal-title">Practice Quiz</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-dar-quiz')">✕</button>
+      </div>
+      <div class="modal-body">
+        <h4 id="dar-quiz-question" style="font-size:15px; margin-bottom:16px;">Question</h4>
+        <div id="dar-quiz-options"></div>
+        <div id="dar-quiz-feedback" style="margin-top:14px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-dar-quiz')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Compose Email Broadcast -->
+  <div id="modal-compose-email" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>✉️ Dispatch Official Email Notification</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-compose-email')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Recipient Target Group:</label>
+          <select id="email-recipient-type" class="form-select">
+            <option value="All Parents">All Registered Parents &amp; Guardians</option>
+            <option value="All Faculty">All Teaching Staff &amp; Faculty</option>
+            <option value="Outstanding Fees">Parents with Outstanding Tuition Dues</option>
+            <option value="All Students">All Enrolled Students</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Email Subject:</label>
+          <input type="text" id="email-subject" class="form-input" value="AlMustapha Academy: Term 2 Examination &amp; Fee Update">
+        </div>
+        <div class="form-group">
+          <label>Message Body:</label>
+          <textarea class="form-input" rows="5" placeholder="Enter broadcast body..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-compose-email')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="window.smsApp.handleEmailSend()">Send Broadcast</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 7: Confirm Delete -->
+  <div id="modal-delete-confirm" class="modal-backdrop">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 style="color:var(--danger);">Purge Student Record</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-delete-confirm')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Permanently remove <strong id="delete-student-name"></strong> from AlMustapha Academy?</p>
+        <p style="margin-top:8px; font-size:12.5px; color:var(--text-muted);">This action is recorded in the immutable audit log.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-delete-confirm')">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="window.smsApp.executeDelete()">Confirm Purge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 8: Secure Password Reset -->
+  <div id="modal-password-reset" class="modal-backdrop">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>🔒 Secure Password Recovery</h3>
+        <button class="modal-close" onclick="window.smsApp.closeModal('modal-password-reset')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: Input Identifier -->
+        <div id="reset-step-1">
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+            Enter your registered academic email address or username to generate a secure identity verification token.
+          </p>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label>Academic Email:</label>
+            <input type="email" id="reset-email-input" class="form-input" placeholder="admin@almustapha.edu" required>
+          </div>
+          <button type="button" class="btn btn-primary" style="width:100%;" onclick="window.smsApp.requestPasswordReset()">
+            Generate Security Verification Token
+          </button>
+        </div>
+
+        <!-- Step 2: Verification & New Password -->
+        <div id="reset-step-2" style="display:none;">
+          <div style="background:var(--success-bg); border-left:4px solid var(--success); padding:10px 14px; border-radius:6px; margin-bottom:14px;">
+            <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:#065f46;">Identity Verification Code Generated:</div>
+            <div style="font-size:18px; font-weight:800; color:#065f46; letter-spacing:0.1em;" id="display-generated-token">ALM-88219</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Enter Security Token:</label>
+            <input type="text" id="reset-token-input" class="form-input" placeholder="e.g. ALM-XXXXXX" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>New Secure Password:</label>
+            <input type="password" id="reset-new-password" class="form-input" placeholder="••••••••" required>
+            
+            <!-- Real-time Password Strength Meter -->
+            <div class="pwd-strength-container">
+              <div class="pwd-strength-bar">
+                <div id="pwd-strength-bar-fill" class="pwd-strength-fill"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                <span id="pwd-strength-label" style="font-weight:700; color:#ef4444;">Strength: Very Weak</span>
+                <span style="color:var(--text-muted);">Min. 8 characters required</span>
+              </div>
+              <div class="pwd-requirements-list" style="margin-top:6px;">
+                <div id="req-length" class="pwd-req-item"><span>•</span> 8+ Characters</div>
+                <div id="req-case" class="pwd-req-item"><span>•</span> Upper &amp; Lower Case</div>
+                <div id="req-number" class="pwd-req-item"><span>•</span> Numbers (0-9)</div>
+                <div id="req-special" class="pwd-req-item"><span>•</span> Symbol (!@#$%)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Confirm New Password:</label>
+            <input type="password" id="reset-confirm-password" class="form-input" placeholder="••••••••" required>
+          </div>
+
+          <button type="button" class="btn btn-primary" style="width:100%;" onclick="window.smsApp.executePasswordReset()">
+            Confirm Password Reset &amp; Update
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.smsApp.closeModal('modal-password-reset')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       FLOATING AI COPILOT / QUESTIONING ASSISTANT
+       ==================================================================== -->
+  <!-- Circular Floating Trigger Button -->
+  <div class="ai-copilot-trigger" id="ai-copilot-trigger" title="Ask AlMustapha AI Academic Copilot" onclick="window.smsApp.toggleAICopilot()">
+    🤖
+    <span class="ai-copilot-badge">AI</span>
+  </div>
+
+  <!-- AI Chat Drawer -->
+  <div class="ai-copilot-drawer" id="ai-copilot-drawer">
+    <div class="ai-copilot-header">
+      <div class="ai-copilot-header-info">
+        <div class="ai-copilot-avatar">🧠</div>
+        <div>
+          <div style="font-weight:800; font-size:14px;">AlMustapha AI Copilot</div>
+          <div style="font-size:11px; color:#cbd5e1;">Academic &amp; Portal Questioning Assistant • Online</div>
+        </div>
+      </div>
+      <button style="background:none; border:none; color:#ffffff; font-size:18px; cursor:pointer;" onclick="window.smsApp.toggleAICopilot()">✕</button>
+    </div>
+
+    <!-- Quick Subject / Feature Suggestion Chips -->
+    <div class="ai-copilot-topic-chips">
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('Explain Calculus derivatives and chain rule')">📐 Calculus</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('What are Newton\'s laws of motion?')">⚡ Newton's Laws</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('Explain chemical equilibrium and pH buffer solutions')">🧪 Chemistry</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('Explain Central Dogma of DNA and genetics')">🧬 DNA Genetics</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('What is Big-O complexity in computer science algorithms?')">💻 Algorithms</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('How do I write an academic essay using PEEL method?')">✍️ Essay Structure</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('Who were the Golden Age Islamic scholars in science?')">📜 Islamic Scholars</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('How do I print a student report card in this website?')">🌐 Print Report Card</button>
+      <button class="ai-topic-chip" onclick="window.smsApp.askAICopilotPrompt('Where can I see the student QR digital ID card?')">🪪 Digital ID</button>
+    </div>
+
+    <!-- Scrollable Messages Area -->
+    <div class="ai-chat-messages" id="ai-copilot-messages">
+      <div class="ai-msg bot">
+        <strong>Peace be upon you! I am the AlMustapha AI Academic Copilot.</strong>
+        <p style="margin-top:6px; font-size:12.5px;">
+          You can ask me questions about any academic subject (Mathematics, Physics, Chemistry, Biology, Computer Science, Literature, Islamic Studies, Economics) or ask me how to perform operations on this website!
+        </p>
+        <p style="margin-top:4px; font-size:11.5px; color:var(--text-muted);">
+          <em>Click any topic pill above or type your question below.</em>
+        </p>
+      </div>
+    </div>
+
+    <!-- Chat Input Bar -->
+    <div class="ai-chat-input-bar">
+      <input type="text" id="ai-copilot-input" class="form-input" style="flex-grow:1; font-size:13px;" placeholder="Ask anything about subjects, topics, or website..." autocomplete="off">
+      <button class="btn btn-primary btn-sm" onclick="window.smsApp.sendAICopilotMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/security.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/calculations.js"></script>
+  <script src="js/qrcode.js"></script>
+  <script src="js/ai_assistant.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
